@@ -10,7 +10,7 @@ class App extends React.Component {
     autoRefresh: false,
   };
 
-  handleAutoRefresh = () => {
+  toggleAutoRefresh = () => {
     this.setState((prevState) => ({
       autoRefresh: !prevState.autoRefresh,
     }));
@@ -25,7 +25,7 @@ class App extends React.Component {
         <Header />
         <Title
           buttonTitle={buttonTitle}
-          handleAutoRefresh={this.handleAutoRefresh}
+          toggleAutoRefresh={this.toggleAutoRefresh}
           autoRefresh={this.state.autoRefresh}
         />
         <PostsList />

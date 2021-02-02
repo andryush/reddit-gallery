@@ -1,6 +1,6 @@
 import React from "react";
 
-function Title({ buttonTitle, handleAutoRefresh, autoRefresh }) {
+function Title({ buttonTitle, toggleAutoRefresh, autoRefresh }) {
   return (
     <div className="jumbotron text-center">
       <h1 className="display-4">Top Comments</h1>
@@ -16,7 +16,7 @@ function Title({ buttonTitle, handleAutoRefresh, autoRefresh }) {
         className={
           autoRefresh ? "btn btn-danger btn-lg" : "btn btn-dark btn-lg"
         }
-        onClick={handleAutoRefresh}
+        onClick={toggleAutoRefresh}
       >
         {buttonTitle}
       </button>

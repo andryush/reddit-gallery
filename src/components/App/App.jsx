@@ -17,7 +17,8 @@ class App extends React.Component {
   };
 
   render() {
-    const buttonTitle = this.state.autoRefresh
+    const { autoRefresh } = this.state;
+    const buttonTitle = autoRefresh
       ? "Stop auto-refresh"
       : "Start auto-refresh";
     return (
@@ -26,9 +27,9 @@ class App extends React.Component {
         <Title
           buttonTitle={buttonTitle}
           toggleAutoRefresh={this.toggleAutoRefresh}
-          autoRefresh={this.state.autoRefresh}
+          autoRefresh={autoRefresh}
         />
-        <PostsList />
+        <PostsList autoRefresh={autoRefresh} />
       </div>
     );
   }

@@ -6,33 +6,56 @@ class PostsList extends React.Component {
   state = {
     posts: [],
     loading: false,
+    intervalId: 0,
   };
 
-  componentDidMount() {
-    this.updateLoading();
-    fetch("https://www.reddit.com/r/reactjs.json?limit=100")
-      .then((response) => response.json())
-      .then((data) => {
-        const sorted = this.sortByComments(data.data.children);
-        this.setState({
-          posts: sorted,
-          loading: false,
-        });
-      });
-  }
-
-  sortByComments = (posts) => {
+  sortPostsByComments = (posts) => {
     const sorted = posts.sort(
       (a, b) => b.data.num_comments - a.data.num_comments
     );
     return sorted;
   };
 
-  updateLoading = () => {
+  toggleLoading = () => {
     this.setState((prevState) => ({
       loading: !prevState.loading,
     }));
   };
+
+  getPosts = async () => {
+    this.toggleLoading();
+    const posts = await fetch(
+      "https://www.reddit.com/r/reactjs.json?limit=100"
+    ).then((response) => response.json());
+
+    const sorted = this.sortPostsByComments(posts.data.children);
+    this.updatePosts(sorted);
+    this.toggleLoading();
+  };
+
+  updatePosts = (posts) => {
+    this.setState({
+      posts: posts,
+    });
+  };
+
+  componentDidMount() {
+    this.getPosts();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.autoRefresh !== prevProps.autoRefresh) {
+      let intervalId = setInterval(this.getPosts, 3000);
+      if (this.state.intervalId === prevState.intervalId) {
+        this.setState({
+          intervalId: intervalId,
+        });
+      }
+    }
+    if (!this.props.autoRefresh) {
+      clearInterval(this.state.intervalId);
+    }
+  }
 
   render() {
     const { posts, loading } = this.state;

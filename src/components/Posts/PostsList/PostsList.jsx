@@ -5,6 +5,7 @@ import Spinner from "../../Spinner/Spinner";
 class PostsList extends React.Component {
   state = {
     posts: [],
+    filteredPosts: [],
     loading: false,
     intervalId: 0,
   };
@@ -14,6 +15,15 @@ class PostsList extends React.Component {
       (a, b) => b.data.num_comments - a.data.num_comments
     );
     return sorted;
+  };
+
+  filterPostsByRangeValue = (rangeValue) => {
+    const filtered = this.state.posts.filter(
+      (el) => el.data.num_comments >= Number(rangeValue)
+    );
+    this.setState({
+      filteredPosts: filtered,
+    });
   };
 
   toggleLoading = () => {
@@ -30,6 +40,7 @@ class PostsList extends React.Component {
 
     const sorted = this.sortPostsByComments(posts.data.children);
     this.updatePosts(sorted);
+    this.filterPostsByRangeValue(this.props.rangeValue);
     this.toggleLoading();
   };
 
@@ -55,17 +66,27 @@ class PostsList extends React.Component {
     if (!this.props.autoRefresh) {
       clearInterval(this.state.intervalId);
     }
+
+    if (this.props.rangeValue !== prevProps.rangeValue) {
+      this.filterPostsByRangeValue(this.props.rangeValue);
+    }
   }
 
   render() {
-    const { posts, loading } = this.state;
+    const { filteredPosts, loading } = this.state;
 
     return (
       <div className="container d-flex flex-wrap justify-content-between">
+        <div className="text-center w-100">
+          {filteredPosts.length === 0
+            ? "No results found matching your criteria"
+            : null}
+        </div>
+
         {loading ? (
           <Spinner />
         ) : (
-          posts.map((el) => {
+          filteredPosts.map((el) => {
             return (
               <Post
                 key={el.data.id}

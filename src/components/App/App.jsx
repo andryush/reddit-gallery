@@ -8,6 +8,7 @@ import PostsList from "../Posts/PostsList/PostsList";
 class App extends React.Component {
   state = {
     autoRefresh: false,
+    rangeValue: 0,
   };
 
   toggleAutoRefresh = () => {
@@ -16,8 +17,15 @@ class App extends React.Component {
     }));
   };
 
+  changeRange = (e) => {
+    console.log(typeof e.target.value);
+    this.setState({
+      rangeValue: e.target.value,
+    });
+  };
+
   render() {
-    const { autoRefresh } = this.state;
+    const { autoRefresh, rangeValue } = this.state;
     const buttonTitle = autoRefresh
       ? "Stop auto-refresh"
       : "Start auto-refresh";
@@ -28,8 +36,10 @@ class App extends React.Component {
           buttonTitle={buttonTitle}
           toggleAutoRefresh={this.toggleAutoRefresh}
           autoRefresh={autoRefresh}
+          rangeValue={rangeValue}
+          changeRange={this.changeRange}
         />
-        <PostsList autoRefresh={autoRefresh} />
+        <PostsList autoRefresh={autoRefresh} rangeValue={rangeValue} />
       </div>
     );
   }

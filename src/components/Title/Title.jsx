@@ -1,6 +1,13 @@
 import React from "react";
+import RangeInput from "./RangeInput/RangeInput";
 
-function Title({ buttonTitle, toggleAutoRefresh, autoRefresh }) {
+function Title({
+  buttonTitle,
+  toggleAutoRefresh,
+  autoRefresh,
+  rangeValue,
+  changeRange,
+}) {
   return (
     <div className="jumbotron text-center">
       <h1 className="display-4">Top Comments</h1>
@@ -10,7 +17,7 @@ function Title({ buttonTitle, toggleAutoRefresh, autoRefresh }) {
       </p>
 
       <hr className="my-4" />
-
+      <RangeInput rangeValue={rangeValue} changeRange={changeRange} />
       <button
         type="button"
         className={

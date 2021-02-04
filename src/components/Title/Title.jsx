@@ -13,7 +13,7 @@ function Title({
       <h1 className="display-4">Top Comments</h1>
       <p className="lead">
         This is a simple Single-Page Application that is showing top commented
-        posts on Reddit
+        posts on Reddit /r/ReactJS
       </p>
 
       <hr className="my-4" />

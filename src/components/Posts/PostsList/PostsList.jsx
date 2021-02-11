@@ -1,54 +1,26 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import Post from "./Post/Post";
 import Spinner from "../../Spinner/Spinner";
 
 function PostsList({ autoRefresh, rangeValue }) {
   const [posts, setPosts] = useState([]);
-  const [filteredPosts, setFilteredPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const intervalId = useRef(null);
 
-  const sortPostsByComments = (posts) => {
-    const sorted = posts.sort(
-      (a, b) => b.data.num_comments - a.data.num_comments
-    );
-    return sorted;
-  };
-
-  const filterPostsByRangeValue = (sorted, rangeValue) => {
-    const filtered = sorted.filter(
-      (el) => el.data.num_comments >= Number(rangeValue)
-    );
-    setFilteredPosts(filtered);
-  };
-
-  const toggleLoading = () => {
-    setLoading((prev) => !prev);
-  };
-
-  const updatePosts = (posts) => {
-    setPosts(posts);
-  };
-
   const getPosts = async function () {
-    toggleLoading();
+    setLoading(true);
     const posts = await fetch(
       "https://www.reddit.com/r/reactjs.json?limit=100"
     ).then((response) => response.json());
-    const sorted = sortPostsByComments(posts.data.children);
-    updatePosts(sorted);
-    filterPostsByRangeValue(sorted, rangeValue);
-    toggleLoading();
+    setPosts(posts.data.children);
+    setLoading(false);
   };
 
   useEffect(() => {
-    console.log("GETPOSTS useEffect");
     getPosts();
   }, []);
 
   useEffect(() => {
-    console.log("INTERVAL useEffect");
-
     if (autoRefresh) {
       const id = setInterval(getPosts, 3000);
       intervalId.current = id;
@@ -57,23 +29,24 @@ function PostsList({ autoRefresh, rangeValue }) {
     }
   }, [autoRefresh]);
 
-  useEffect(() => {
-    console.log("FILTER useEffect");
-    filterPostsByRangeValue(posts, rangeValue);
-  }, [rangeValue, posts]);
+  const computedPosts = useMemo(
+    () =>
+      posts
+        .sort((a, b) => b.data.num_comments - a.data.num_comments)
+        .filter((el) => el.data.num_comments >= Number(rangeValue)),
+    [posts, rangeValue]
+  );
 
   return (
     <div className="container d-flex flex-wrap justify-content-between">
-      <div className="text-center w-100">
-        {filteredPosts.length === 0
-          ? "No results found matching your criteria"
-          : null}
-      </div>
-
       {loading ? (
         <Spinner />
+      ) : computedPosts.length === 0 ? (
+        <div className="text-center w-100">
+          No results found matching your criteria
+        </div>
       ) : (
-        filteredPosts.map((el) => {
+        computedPosts.map((el) => {
           return (
             <Post
               key={el.data.id}

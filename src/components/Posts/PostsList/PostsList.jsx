@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Post from "./Post/Post";
 import Spinner from "../../Spinner/Spinner";
 
@@ -30,7 +30,7 @@ function PostsList({ autoRefresh, rangeValue }) {
     setPosts(posts);
   };
 
-  const getPosts = async () => {
+  const getPosts = async function () {
     toggleLoading();
     const posts = await fetch(
       "https://www.reddit.com/r/reactjs.json?limit=100"
@@ -42,10 +42,13 @@ function PostsList({ autoRefresh, rangeValue }) {
   };
 
   useEffect(() => {
+    console.log("GETPOSTS useEffect");
     getPosts();
   }, []);
 
   useEffect(() => {
+    console.log("INTERVAL useEffect");
+
     if (autoRefresh) {
       const id = setInterval(getPosts, 3000);
       intervalId.current = id;
@@ -55,8 +58,9 @@ function PostsList({ autoRefresh, rangeValue }) {
   }, [autoRefresh]);
 
   useEffect(() => {
+    console.log("FILTER useEffect");
     filterPostsByRangeValue(posts, rangeValue);
-  }, [rangeValue]);
+  }, [rangeValue, posts]);
 
   return (
     <div className="container d-flex flex-wrap justify-content-between">
